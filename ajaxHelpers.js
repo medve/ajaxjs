@@ -40,22 +40,20 @@ function setObjField(obj,field,value,operation,prefix)
 			}
 		});
 	}
+	else if(operation=="list_img")
+	{
+		f.each(function(){
+			for(var i=0;i<value.length;i++)
+			{
+				$(this).append($("<img src='' alt=''/>").attr("href",value[i]);
+			}
+		});
+	}
 	else if(operation!==undefined&&operation[0]=="_")
 	{
 		f.attr(operation.slice(1),value);
 	}
 	return obj;
-}
-
-function fillObject(obj,values)
-{
-	var a;
-	for(var i in values)
-	{
-		if(values[i]!==undefined)
-			a=setObjField(obj,values[i]["field"],values[i]['value'],values[i]['operation'],values[i]['prefix']);
-	}
-	return a;
 }
 
 function getFormValues(form,formElems)//получает значения с полей формы и возвращает словарь
