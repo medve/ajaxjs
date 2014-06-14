@@ -220,6 +220,7 @@ function LoadPageAJAX(template,rls,top_button,bottom_button)
 	//when loading is ok
 	this.top_button    = top_button;
 	this.bottom_button = bottom_button;
+	this.filter_button = null;
 	//click on this buttons activates loading
 	this.button_after_filter = false;
 	//is button for activation of loading after filterin needed
@@ -235,7 +236,6 @@ function LoadPageAJAX(template,rls,top_button,bottom_button)
 	this.cont         = null;
 	this.page_cont    = "<div class='obj_page' id='page_'><div>";
 
- 
  	this.load_next = function(){
 		this.last_page++;
 		loadObjects(true);
@@ -363,7 +363,6 @@ function LoadPageAJAX(template,rls,top_button,bottom_button)
 				this.load_next();		
 			}
 		}
-
 	};
 
 	document.addEventListener('afterLoadAjax',this.after_load_more, false);
@@ -373,4 +372,5 @@ function LoadPageAJAX(template,rls,top_button,bottom_button)
 		this.top_button.on('click',this.top_button_click);
 	if(!this.load_bottom)
 		this.bottom_button.on("click",this.bottom_button_click);
+	$(this.filter_button).on("click",this.filter_objects);
 }
