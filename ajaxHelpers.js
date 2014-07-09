@@ -208,7 +208,7 @@ function ajaxOnScroll()
 			loadPrev();		
 		}
 
-		if(last_idx===undefined||$(document).scrollTop()+$(window).height() >= last_idx.top)&&load_bottom)
+		if((last_idx===undefined||$(document).scrollTop()+$(window).height() >= last_idx.top)&&load_bottom)
 		{
 			$(this).off(event);
 			loadNext();		
