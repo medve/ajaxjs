@@ -161,7 +161,7 @@ var HelperFunctions = {
 			f.each(function(){
 				for(var i=0;i<value.length;i++)
 				{
-					$(this).append($("<img src='' alt=''/>").attr("href",value[i]);
+					$(this).append($("<img src='' alt=''/>").attr("href",value[i]));
 				}
 			});
 		}
@@ -199,12 +199,12 @@ var HelperFunctions = {
 			a.push(temp);
 		}
 		return a;
-	};
+	}
 };
 
 function LoadPageAJAX(template,rls,top_button,bottom_button) 
 {
-	this.form_elems  = ["input[type=number]","input[type=text]","select","input:checkbox:checked"];
+	this.form_elems    = ["input[type=number]","input[type=text]","select","input:checkbox:checked"];
 	//selectors used for collecting form values
 	this.first_page    = 1;
 	this.last_page     = this.first_page;    
@@ -224,12 +224,12 @@ function LoadPageAJAX(template,rls,top_button,bottom_button)
 	//click on this buttons activates loading
 	this.button_after_filter = false;
 	//is button for activation of loading after filterin needed
-	this.empty         = null;
+	this.empty        = null;
 	//block for show that page is empty
-	this.validation    = {};
+	this.validation   = {};
 	//re of form fields that will be validated
-	this.template            = template;
-	this.rls                 = rls;
+	this.template     = template;
+	this.rls          = rls;
 	//template for object creating and rules how to fill that
 	this.data_loading = false;
 	this.data         = null;
@@ -238,12 +238,12 @@ function LoadPageAJAX(template,rls,top_button,bottom_button)
 
  	this.load_next = function(){
 		this.last_page++;
-		loadObjects(true);
+		this.load_objects(true);
 	};
 
 	this.load_prev = function(){
 		this.first_page--;
-		loadObjects(false);
+		this.load_objects(false);
 	};
 
 	this.filter_objects = function(){
@@ -253,7 +253,7 @@ function LoadPageAJAX(template,rls,top_button,bottom_button)
 		this.load_top   = false;
 		this.load_bottom = false;
 		document.addEventListener('afterFilterAjax',this.after_filter, false);
-		loadObjects(true,true);
+		this.load_objects(true,true);
 	};
 
 	this.set_data = function( forward ){
@@ -356,7 +356,7 @@ function LoadPageAJAX(template,rls,top_button,bottom_button)
 				this.load_prev();		
 			}
 
-			if(last_idx===undefined
+			if((last_idx===undefined
 				|| $(document).scrollTop()+$(window).height() >= last_idx.top)
 				&& this.load_bottom)
 			{
