@@ -7,14 +7,14 @@ var HelperFunctions = {
 	address     :  /^\d{0,4}[\D\S]{0,2}$/,
 	//REs for validation
 
-	validate_field : function (field,re)
+	validate_field : function ( field, re )
 	{
 		if(re === undefined)
 			return true;
 		return re.test(field.val());
 	},
 
-	val_event : function (event)//onSubmit
+	val_event : function ( event )//onSubmit
 	{
 		$(this).find("input[type=text],textarea,select").each(function(index){
 			if(!validate_field($(this),event.data.re[$(this).attr("id")]))
@@ -30,7 +30,7 @@ var HelperFunctions = {
 		});
 	},
 
-	get_form_values : function (form,formElems)
+	get_form_values : function ( form, formElems )
 	//получает значения с полей формы и возвращает словарь
 	{
 		var temp, a={};
@@ -51,7 +51,7 @@ var HelperFunctions = {
 		return a;		
 	},
 
-	dict_to_hash : function (dict)
+	dict_to_hash : function ( dict )
 	//преобразует словарь в GET запрос
 	{	
 		var a="#";
@@ -64,10 +64,10 @@ var HelperFunctions = {
 		return this.split_req(hash);
 	},
 
-	set_mult_checkboxes : function(obj)
+	set_mult_checkboxes : function( obj )
 	//sets groupped checkboxes by GET params
 	{
-		var get=GET_to_dict();
+		var get=this.GET_to_dict();
 		var params=get[obj.attr("name")];
 		if(params!==undefined)
 		{
@@ -84,7 +84,7 @@ var HelperFunctions = {
 		}
 	},
 
-	encode_request : function (dict,a)
+	encode_request : function ( dict, a )
 	//makes encoded URI from the dict
 	{
 		for(var i in dict)
@@ -97,14 +97,14 @@ var HelperFunctions = {
 		return encodeURI(a.slice(0,-1));
 	},
 
-	dict_to_GET : function (dict)
+	dict_to_GET : function ( dict )
 	//преобразует словарь в GET запрос
 	{	
 		var a="?";
 		return this.encode_request(dict,a);
 	},
 
-	split_req : function (req)
+	split_req : function ( req )
 	//makes dict from request value
 	{
 		req=req.split("&");
@@ -124,7 +124,7 @@ var HelperFunctions = {
 		return this.split_req(get);
 	},
 
-	set_obj_field : function (obj,field,value,operation,prefix)
+	set_obj_field : function ( obj, field, value, operation, prefix )
 	{
 		var f=obj;
 		if(field!="")
@@ -141,7 +141,7 @@ var HelperFunctions = {
 		}
 		else if(operation=="class")
 		{
-			f.each(function(){addClass(value);});
+			f.each(function(){$(this).addClass(value);});
 		}
 		else if(operation=="val")
 		{
@@ -161,18 +161,18 @@ var HelperFunctions = {
 			f.each(function(){
 				for(var i=0;i<value.length;i++)
 				{
-					$(this).append($("<img src='' alt=''/>").attr("href",value[i]));
+					$(this).append($("<img src='' alt=''/>").attr("src",value[i]));
 				}
 			});
 		}
-		else if(operation!==undefined&&operation[0]=="_")
+		else if(operation!==undefined && operation[0]=="_")
 		{
 			f.attr(operation.slice(1),value);
 		}
 		return obj;
 	},
 
-	fill_object : function (obj,values)
+	fill_object : function ( obj, values )
 	{
 		var a;
 		for(var i in values)
@@ -183,7 +183,7 @@ var HelperFunctions = {
 		return a;
 	},
 
-	parse_data : function (data,rls)//преобразует json в словарь значений
+	parse_data : function ( data, rls )//преобразует json в словарь значений
 	//rls - соответствие между полем модели, идентификатором объекта DOM и операцией 
 	{
 		var temp,a=[];
@@ -202,11 +202,11 @@ var HelperFunctions = {
 	}
 };
 
-function LoadPageAJAX(template,rls,top_button,bottom_button) 
+function LoadPageAJAX( template, rls, top_button, bottom_button, page ) 
 {
 	this.form_elems    = ["input[type=number]","input[type=text]","select","input:checkbox:checked"];
 	//selectors used for collecting form values
-	this.first_page    = 1;
+	this.first_page    = page === undefined ? 1 : page;
 	this.last_page     = this.first_page;    
 	//current page
 	this.has_next      = false;
@@ -235,6 +235,9 @@ function LoadPageAJAX(template,rls,top_button,bottom_button)
 	this.data         = null;
 	this.cont         = null;
 	this.page_cont    = "<div class='obj_page' id='page_'><div>";
+	this.scroll_event = null;
+
+	//do it need getting page from GET and page changing on scrolling and loading??
 
  	this.load_next = function(){
 		this.last_page++;
@@ -248,11 +251,12 @@ function LoadPageAJAX(template,rls,top_button,bottom_button)
 
 	this.filter_objects = function(){
 		this.cont.empty();
+		this.empty.hide();
 		this.first_page = 1;
 		this.last_page  = 1;
 		this.load_top   = false;
 		this.load_bottom = false;
-		document.addEventListener('afterFilterAjax',this.after_filter, false);
+		$(document).one('afterFilterAjax',{ load_class: this },this.after_filter);
 		this.load_objects(true,true);
 	};
 
@@ -261,9 +265,9 @@ function LoadPageAJAX(template,rls,top_button,bottom_button)
 		for(var i in d)
 		{
 			if( forward )
-				page_num = this.last_page;
+				var page_num = this.last_page;
 			else
-				page_num = this.first_page;
+				var page_num = this.first_page;
 			var page = $(this.page_cont).attr("id","page_"+page_num);
 			page=page.append(HelperFunctions.fill_object($(this.template),d[i]));
 			if(forward)
@@ -271,106 +275,131 @@ function LoadPageAJAX(template,rls,top_button,bottom_button)
 			else
 				this.cont.prepend(page);
 		}
-		delete kwargs.page;
 	};
 
 	this.load_objects = function( forward, filter ){
 		var kwargs = HelperFunctions.get_form_values(this.form,this.form_elems);
 		if( forward )
-			page = this.last_page;
+			var page = this.last_page;
 		else
-			page = this.first_page;
+			var page = this.first_page;
 		kwargs['page']    = page;
 		this.data_loading = true;
 		this.data         = null;
+		var loader        = this;
 		$.getJSON(this.address,kwargs,function(data){
-			this.data_loading = false;
-			this.data         = data;
+			loader.data_loading = false;
+			loader.data         = data;
 			if(!data['fields'].length)
-				this.is_empty = true;
+				loader.is_empty = true;
 			else
-				this.is_empty = false;
-			this.has_next = data['has_next'];
-			this.set_data(forward);
-			history.pushState(null,null,location.pathname+dict_to_GET(kwargs));	
+				loader.is_empty = false;
+			if(forward)
+				loader.has_next = data['has_next'];
+			loader.set_data(forward);
+			history.pushState(null,null,location.pathname + HelperFunctions.dict_to_GET(kwargs));	
 			if( filter )
-				document.dispatchEvent(this.afterFilterAjax);
+				$(document).trigger(loader.afterFilterAjax);
 			else
-				document.dispatchEvent(this.afterLoadAjax);
+				$(document).trigger(loader.afterLoadAjax);
 		});
 	};
 
-	this.top_button_click = function(event){
-		this.top_button.hide();
-		this.load_next();
-		if(!this.load_bottom) 
-			$("body").on("scroll",this.on_scroll);
-		this.load_top = true;
+	this.top_button_click = function( event ){
+		var load_class = event.data.load_class;
+		load_class.top_button.hide();
+		load_class.load_prev();
+		if(load_class.scroll_event === null)
+			$(document).on("scroll",{load_class:load_class},load_class.on_scroll);
+		load_class.load_top = true;
 	};
 
-	this.bottom_button_click = function(event){
-		this.bottom_button.hide();
-		this.load_prev();
-		if(!this.load_top) 
-			$("body").on("scroll",this.on_scroll);
-		this.load_bottom = true;
+	this.bottom_button_click = function( event ){
+		var load_class = event.data.load_class;
+		load_class.bottom_button.hide();
+		load_class.load_next();
+		if(load_class.scroll_event === null)
+			$(document).on("scroll",{load_class:load_class},load_class.on_scroll);
+		load_class.load_bottom = true;
 	};
 
-	this.after_load_more = function(event)//Действия после "загрузить еще"
+	this.filter_button_click = function( event ){
+		var load_class = event.data.load_class;
+		$(document).off(load_class.scroll_event);
+		load_class.bottom_button.hide();
+		load_class.top_button.hide();
+		load_class.load_bottom = false;
+		load_class.load_top    = false;
+		load_class.filter_objects();
+	};
+
+	this.after_load_more = function( event )//Действия после "загрузить еще"
 	{
-		if(this.has_next || this.first_page > 0)
+		var load_class = event.data.load_class;
+		if(load_class.has_next || load_class.first_page > 1)
 		{
-			$("body").on("scroll",this.on_scroll);
+			if(load_class.scroll_event === null)
+				$(document).on("scroll",{load_class:load_class},load_class.on_scroll);
 		}
-	}
+	};
 
-	this.after_filter = function(event)//Действия после фильтрации
+	this.after_filter = function( event )//Действия после фильтрации
 	{
-		if(this.has_next)
+		var load_class = event.data.load_class;
+		if(load_class.has_next)
 		{
-			if(this.button_after_filter)
-				this.bottom_button.show();
+			if(load_class.button_after_filter)
+				load_class.bottom_button.show();
 			else
 			{
-				$("body").on("scroll",this.on_scroll);
-				this.load_bottom = true;
+				if(load_class.scroll_event === null)
+					$(document).on("scroll",{load_class:load_class},load_class.on_scroll);
+				load_class.load_bottom = true;
 			}
 		}
-		if(this.is_empty)
+		if(load_class.is_empty)
 		{
-			this.empty.show();
+			load_class.empty.show();
 		}
-	}
+	};
 
-	this.on_scroll = function(event){
-		var page_class = this.page_cont.attr("class");
+	this.on_scroll = function( event ){
+		var load_class = event.data.load_class;
+		var page_class = $(load_class.page_cont).attr("class");
 		var pages = $("."+page_class);
 		var last_idx=pages.last().offset(),
 			first_idx=pages.first().offset();
-		if(!this.data_loading)
+		if( !load_class.data_loading )
 		{
+
 			if((first_idx===undefined
-				|| $(document).scrollTop()+$(window).height() <= first_idx.top)
-				&& this.load_top)
+				|| $(document).scrollTop()<= first_idx.top)
+				&& load_class.load_top && load_class.first_page > 1)
 			{
-				this.load_prev();		
+				load_class.load_prev();	
+				load_class.data_loading = true;	
 			}
 
 			if((last_idx===undefined
 				|| $(document).scrollTop()+$(window).height() >= last_idx.top)
-				&& this.load_bottom)
+				&& load_class.load_bottom && load_class.has_next)
 			{
-				this.load_next();		
+				load_class.load_next();	
+				load_class.data_loading = true;	 	
 			}
 		}
 	};
 
-	document.addEventListener('afterLoadAjax',this.after_load_more, false);
+	this.set_filter_button = function(filter_button){
+		this.filter_button = filter_button;
+		this.filter_button.on("click",{load_class:this},this.filter_button_click);
+	}
+
+	$(document).on('afterLoadAjax',{load_class:this},this.after_load_more);
 	if(this.load_top || this.load_bottom)
-		$("body").on("scroll",this.on_scroll);
+		$(document).on("scroll",{load_class:this},this.on_scroll);
 	if(!this.load_top)
-		this.top_button.on('click',this.top_button_click);
+		this.top_button.on('click',{load_class:this},this.top_button_click);
 	if(!this.load_bottom)
-		this.bottom_button.on("click",this.bottom_button_click);
-	$(this.filter_button).on("click",this.filter_objects);
+		this.bottom_button.on("click",{load_class:this},this.bottom_button_click);	
 }
