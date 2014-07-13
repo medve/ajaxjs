@@ -250,7 +250,6 @@ function LoadPageAJAX( template, rls, top_button, bottom_button, page )
 	};
 
 	this.filter_objects = function(){
-		this.cont.empty();
 		this.empty.hide();
 		this.first_page = 1;
 		this.last_page  = 1;
@@ -288,6 +287,8 @@ function LoadPageAJAX( template, rls, top_button, bottom_button, page )
 		this.data         = null;
 		var loader        = this;
 		$.getJSON(this.address,kwargs,function(data){
+			if(filter)
+				loader.cont.empty();
 			loader.data_loading = false;
 			loader.data         = data;
 			if(!data['fields'].length)
