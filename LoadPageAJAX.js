@@ -261,19 +261,22 @@ function LoadPageAJAX( template, rls, top_button, bottom_button, page )
 
 	this.set_data = function( forward ){
 		var d = HelperFunctions.parse_data(this.data,this.rls)
+		if( forward )
+			var page_num = this.last_page;
+		else
+			var page_num = this.first_page;
+		var page = $(this.page_cont).attr("id","page_"+page_num);
 		for(var i in d)
 		{
-			if( forward )
-				var page_num = this.last_page;
-			else
-				var page_num = this.first_page;
-			var page = $(this.page_cont).attr("id","page_"+page_num);
-			page=page.append(HelperFunctions.fill_object($(this.template),d[i]));
 			if(forward)
-				this.cont.append(page);
+				page=page.prepend(HelperFunctions.fill_object($(this.template),d[i]));
 			else
-				this.cont.prepend(page);
+				page=page.append(HelperFunctions.fill_object($(this.template),d[i]));
 		}
+		if(forward)
+			this.cont.append(page);
+		else
+			this.cont.prepend(page);
 	};
 
 	this.load_objects = function( forward, filter ){
@@ -298,7 +301,7 @@ function LoadPageAJAX( template, rls, top_button, bottom_button, page )
 			if(forward)
 				loader.has_next = data['has_next'];
 			loader.set_data(forward);
-			history.pushState(null,null,location.pathname + HelperFunctions.dict_to_GET(kwargs));	
+			// history.pushState(null,null,location.pathname + HelperFunctions.dict_to_GET(kwargs));	
 			if( filter )
 				$(document).trigger(loader.afterFilterAjax);
 			else
