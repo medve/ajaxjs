@@ -268,10 +268,7 @@ function LoadPageAJAX( template, rls, top_button, bottom_button, page )
 		var page = $(this.page_cont).attr("id","page_"+page_num);
 		for(var i in d)
 		{
-			if(forward)
-				page=page.prepend(HelperFunctions.fill_object($(this.template),d[i]));
-			else
-				page=page.append(HelperFunctions.fill_object($(this.template),d[i]));
+			page=page.append(HelperFunctions.fill_object($(this.template),d[i]));
 		}
 		if(forward)
 			this.cont.append(page);
