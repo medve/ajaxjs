@@ -277,6 +277,7 @@ function LoadPageAJAX( template, rls, top_button, bottom_button, page )
 	};
 
 	this.load_objects = function( forward, filter ){
+		console.log("load objects");
 		var kwargs = HelperFunctions.get_form_values(this.form,this.form_elems);
 		if( forward )
 			var page = this.last_page;
@@ -300,9 +301,9 @@ function LoadPageAJAX( template, rls, top_button, bottom_button, page )
 			loader.set_data(forward);
 			// history.pushState(null,null,location.pathname + HelperFunctions.dict_to_GET(kwargs));	
 			if( filter )
-				$(document).trigger(loader.afterFilterAjax);
+				document.dispatchEvent(loader.afterFilterAjax);
 			else
-				$(document).trigger(loader.afterLoadAjax);
+				document.dispatchEvent(loader.afterLoadAjax);
 		});
 	};
 
@@ -336,6 +337,7 @@ function LoadPageAJAX( template, rls, top_button, bottom_button, page )
 
 	this.after_load_more = function( event )//Действия после "загрузить еще"
 	{
+		console.log("after load more");
 		var load_class = event.data.load_class;
 		if(load_class.has_next || load_class.first_page > 1)
 		{
@@ -346,6 +348,7 @@ function LoadPageAJAX( template, rls, top_button, bottom_button, page )
 
 	this.after_filter = function( event )//Действия после фильтрации
 	{
+		console.log("after filter");
 		var load_class = event.data.load_class;
 		if(load_class.has_next)
 		{
@@ -362,9 +365,14 @@ function LoadPageAJAX( template, rls, top_button, bottom_button, page )
 		{
 			load_class.empty.show();
 		}
+		else
+		{
+			load_class.empty.hide();
+		}
 	};
 
 	this.on_scroll = function( event ){
+		console.log("scroll");
 		var load_class = event.data.load_class;
 		var page_class = $(load_class.page_cont).attr("class");
 		var pages = $("."+page_class);
