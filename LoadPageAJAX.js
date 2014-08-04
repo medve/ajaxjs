@@ -215,8 +215,10 @@ function LoadPageAJAX( template, rls, top_button, bottom_button, page )
 	//is loading of previous pages active 
 	this.load_bottom   = bottom_button === undefined;
 	//is loading of next pages active
-	this.afterLoadAjax = new Event('afterLoadAjax');
-	this.afterFilterAjax = new Event('afterFilterAjax');
+	this.afterLoadAjax = document.createEvent('Event');
+	this.afterLoadAjax.initEvent('afterLoadAjax', true, true);
+	this.afterFilterAjax = document.createEvent('Event');
+	this.afterFilterAjax.initEvent('afterFilterAjax', true, true);
 	//when loading is ok
 	this.top_button    = top_button;
 	this.bottom_button = bottom_button;
@@ -299,6 +301,7 @@ function LoadPageAJAX( template, rls, top_button, bottom_button, page )
 			if(forward)
 				loader.has_next = data['has_next'];
 			loader.set_data(forward);
+			console.log(location.pathname + HelperFunctions.dict_to_GET(kwargs));
 			// history.pushState(null,null,location.pathname + HelperFunctions.dict_to_GET(kwargs));	
 			if( filter )
 				document.dispatchEvent(loader.afterFilterAjax);
@@ -362,13 +365,9 @@ function LoadPageAJAX( template, rls, top_button, bottom_button, page )
 			}
 		}
 		if(load_class.is_empty)
-		{
 			load_class.empty.show();
-		}
 		else
-		{
 			load_class.empty.hide();
-		}
 	};
 
 	this.on_scroll = function( event ){
