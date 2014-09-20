@@ -312,7 +312,7 @@ function LoadPageAJAX( template, rls, top_button, bottom_button, page )
 				loader.has_next = data['has_next'];
 			loader.set_data(forward);
 			console.log(location.pathname + HelperFunctions.dict_to_GET(kwargs));
-			location.hash="!"+ HelperFunctions.dict_to_GET(kwargs).slice(1);	
+			// location.hash="!"+ HelperFunctions.dict_to_GET(kwargs).slice(1);	
 			if( filter )
 				document.dispatchEvent(loader.afterFilterAjax);
 			else
