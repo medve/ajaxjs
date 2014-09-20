@@ -124,13 +124,23 @@ var HelperFunctions = {
 		return this.split_req(get);
 	},
 
-	set_obj_field : function ( obj, field, value, operation, prefix )
+	set_obj_field : function ( obj, field, value, operation, prefix, postfix )
 	{
 		var f=obj;
 		if(field!="")
 			f=f.find(field);
-		if(operation!="list"&&prefix!==undefined)
-			value=prefix+value;
+		if(operation!="list")
+		{
+			if (prefix!==undefined) 
+			{
+				value=prefix+value;
+			}
+			if (postfix!==undefined) 
+			{
+				value=value+postfix;
+			}
+			
+		}
 		if(operation=="text")
 		{
 			f.each(function(){$(this).text(value);});
@@ -178,7 +188,7 @@ var HelperFunctions = {
 		for(var i in values)
 		{
 			if(values[i]!==undefined)
-				a=this.set_obj_field(obj,values[i]["field"],values[i]['value'],values[i]['operation'],values[i]['prefix']);
+				a=this.set_obj_field(obj,values[i]["field"],values[i]['value'],values[i]['operation'],values[i]['prefix'],values[i]['postfix']);
 		}
 		return a;
 	},
@@ -187,14 +197,14 @@ var HelperFunctions = {
 	//rls - соответствие между полем модели, идентификатором объекта DOM и операцией 
 	{
 		var temp,a=[];
-		for(var i in data['fields'])
+		for(var i in data['objects'])
 		{
 			temp=[];
-			for(var j in data['fields'][i])
+			for(var j in data['objects'][i]["fields"])
 			{
 				
 				if(rls[j]!==undefined)
-					temp.push({field:rls[j][0],value:data['fields'][i][j],operation:rls[j][1],prefix:rls[j][2]});
+					temp.push({field:rls[j][0],value:data['objects'][i]['fields'][j],operation:rls[j][1],prefix:rls[j][2],postfix:rls[j][3]});
 			}
 			a.push(temp);
 		}
@@ -294,7 +304,7 @@ function LoadPageAJAX( template, rls, top_button, bottom_button, page )
 				loader.cont.empty();
 			loader.data_loading = false;
 			loader.data         = data;
-			if(!data['fields'].length)
+			if(!data['objects'].length)
 				loader.is_empty = true;
 			else
 				loader.is_empty = false;
@@ -302,7 +312,7 @@ function LoadPageAJAX( template, rls, top_button, bottom_button, page )
 				loader.has_next = data['has_next'];
 			loader.set_data(forward);
 			console.log(location.pathname + HelperFunctions.dict_to_GET(kwargs));
-			// history.pushState(null,null,location.pathname + HelperFunctions.dict_to_GET(kwargs));	
+			location.hash="!"+ HelperFunctions.dict_to_GET(kwargs).slice(1);	
 			if( filter )
 				document.dispatchEvent(loader.afterFilterAjax);
 			else
@@ -329,6 +339,8 @@ function LoadPageAJAX( template, rls, top_button, bottom_button, page )
 	};
 
 	this.filter_button_click = function( event ){
+		event.preventDefault();
+		console.log("filter_click");
 		var load_class = event.data.load_class;
 		$(document).off(load_class.scroll_event);
 		load_class.bottom_button.hide();
@@ -399,6 +411,7 @@ function LoadPageAJAX( template, rls, top_button, bottom_button, page )
 	};
 
 	this.set_filter_button = function(filter_button){
+		console.log(filter_button);
 		this.filter_button = filter_button;
 		this.filter_button.on("click",{load_class:this},this.filter_button_click);
 	}
