@@ -321,6 +321,7 @@ function LoadPageAJAX( template, rls, top_button, bottom_button, page )
 	};
 
 	this.top_button_click = function( event ){
+		event.preventDefault();
 		var load_class = event.data.load_class;
 		load_class.top_button.hide();
 		load_class.load_prev();
@@ -330,6 +331,7 @@ function LoadPageAJAX( template, rls, top_button, bottom_button, page )
 	};
 
 	this.bottom_button_click = function( event ){
+		event.preventDefault();
 		var load_class = event.data.load_class;
 		load_class.bottom_button.hide();
 		load_class.load_next();
