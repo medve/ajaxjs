@@ -432,8 +432,8 @@ function LoadPageAJAX( template, rls, top_button, bottom_button, page )
 	$(document).on('afterLoadAjax',{load_class:this},this.after_load_more);
 	if(this.load_top || this.load_bottom)
 		$(document).on("scroll",{load_class:this},this.on_scroll);
-	if(!this.load_top)
+	if(!this.load_top&&this.top_button!==null)
 		this.top_button.on('click',{load_class:this},this.top_button_click);
-	if(!this.load_bottom)
+	if(!this.load_bottom&&this.bottom_button!==null)
 		this.bottom_button.on("click",{load_class:this},this.bottom_button_click);	
 }
