@@ -1,10 +1,18 @@
 var HelperFunctions = {
 	email_re	:  /^\w+@\w+\.[A-Za-z]+$/,
-	phone_re	:  /^\+7\(\d{3}\)\d{3} \d{4}$/,
+	phone_re	:  /^\+\d\(\d{3}\)\d{3} \d{4}$/,
 	anything	:  /.*/,
 	anything_req:  /.+/,
 	address_req :  /^\d{1,4}[\D\S]{0,2}$/,
 	address     :  /^\d{0,4}[\D\S]{0,2}$/,
+	// message : {
+	// 	email_re_message	:  "Адрес email некорректен.",
+	// 	phone_re_message	:  "Формат ввода: +7(234)567 78900.",
+	// 	anything_message	:  "",
+	// 	anything_req_message:  "Поле обязательно для заполнения.",
+	// 	address_req_message :  "Адрес некорректен.",
+	// 	address_message     :  "Адрес некорректен.",
+	// }
 	//REs for validation
 
 	validate_field : function ( field, re )
@@ -17,15 +25,18 @@ var HelperFunctions = {
 	val_event : function ( event )//onSubmit
 	{
 		$(this).find("input[type=text],textarea,select").each(function(index){
-			if(!validate_field($(this),event.data.re[$(this).attr("id")]))
+			re = event.data.re[$(this).attr("id")]
+			if(!validate_field($(this),re))
 			{
 				event.preventDefault();
 				event.stopPropagation();
 				$(this).addClass("invalid");
+				// $(this).parent().find(event.data.error_class).text(message[re]).show();
 			}
 			else
 			{
 				$(this).removeClass("invalid");
+				// $(this).parent().find(event.data.error_class).hide();
 			}
 		});
 	},
@@ -219,7 +230,7 @@ function LoadPageAJAX( template, rls, top_button, bottom_button, page )
 	this.first_page    = page === undefined ? 1 : page;
 	this.last_page     = this.first_page;    
 	//current page
-	this.has_next      = false;
+	this.has_next      = true;
 	this.is_empty      = false;
 	this.load_top      = top_button === undefined;
 	//is loading of previous pages active 
