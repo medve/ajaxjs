@@ -315,7 +315,7 @@ function LoadPageAJAX( template, rls, top_button, bottom_button, page )
 				loader.cont.empty();
 			loader.data_loading = false;
 			loader.data         = data;
-			if(data['objects']===udefined||!data['objects'].length)
+			if(data['objects']===undefined||!data['objects'].length)
 				loader.is_empty = true;
 			else
 				loader.is_empty = false;
